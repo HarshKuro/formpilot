@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+dist-firefox/
+dist-chrome/
+
+# Logs and environment
+*.log
+.env
+.env.local
+.DS_Store
+Thumbs.db

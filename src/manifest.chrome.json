@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "FormPilot - Student Profile Autofill",
+  "version": "1.0.0",
+  "description": "Privacy-first student profile autofill for Google Forms. Your forms. Your profile. One click.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://docs.google.com/forms/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "FormPilot"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://docs.google.com/forms/*"
+      ],
+      "js": [
+        "content/index.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/*",
+        "chunks/*",
+        "icons/*"
+      ],
+      "matches": [
+        "https://docs.google.com/forms/*"
+      ]
+    }
+  ]
+}
