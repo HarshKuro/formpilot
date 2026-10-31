@@ -1,0 +1,99 @@
+name: Automated Release Pipeline (main -> release)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript Typecheck
+        run: pnpm typecheck
+
+      - name: Run Tests
+        run: pnpm test
+
+      - name: Build Extension (Chrome & Firefox)
+        run: pnpm build
+
+      - name: Package ZIP Archives
+        run: pnpm package:zip
+
+      - name: Extract Version
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update Release Branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Fetch remote branches if they exist
+          git fetch origin release || true
+
+          # Checkout or create release branch
+          if git show-ref --quiet refs/remotes/origin/release; then
+            git checkout -B release origin/release
+            git merge main --no-edit -m "chore(release): sync main into release branch"
+          else
+            git checkout -B release
+          fi
+
+          # Ensure release archives are tracked in release branch
+          git add -f releases/*.zip
+          git commit -m "chore(release): add v${{ steps.get_version.outputs.version }} release archives" || echo "No changes to commit"
+          git push origin release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: FormPilot v${{ steps.get_version.outputs.version }}
+          body: |
+            ## FormPilot v${{ steps.get_version.outputs.version }} Release
+            
+            **Your forms. Your profile. One click.**
+            Privacy-first student profile autofill browser extension for Google Forms.
+            
+            ### Included Archives:
+            - `formpilot-chrome-v${{ steps.get_version.outputs.version }}.zip`: For Google Chrome, Brave, Arc, Microsoft Edge, Opera, and Vivaldi.
+            - `formpilot-firefox-v${{ steps.get_version.outputs.version }}.zip`: For Mozilla Firefox.
+            
+            ### Installation:
+            1. Download and unzip the archive for your browser.
+            2. Go to your browser's extension page (`chrome://extensions`, `brave://extensions`, `arc://extensions`, etc.).
+            3. Enable **Developer mode** and click **Load unpacked**.
+            4. Select the unzipped folder.
+          files: |
+            releases/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
