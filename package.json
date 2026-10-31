@@ -7,9 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/package-extension.js",
-    "build:chrome": "vite build --mode chrome && node scripts/package-extension.js chrome",
-    "build:firefox": "vite build --mode firefox && node scripts/package-extension.js firefox",
+    "build": "vite build && node scripts/package-extension.js all",
+    "build:chrome": "vite build && node scripts/package-extension.js chrome",
+    "build:firefox": "vite build && node scripts/package-extension.js firefox",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
