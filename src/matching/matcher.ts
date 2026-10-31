@@ -1,4 +1,4 @@
-import { StudentProfile } from '../domain/profile';
+import { StudentProfile, formatDateToDDMMYY } from '../domain/profile';
 import { ExtractedQuestion, FormOption } from '../forms/questionExtractor';
 
 export type SkipReason =
@@ -431,12 +431,17 @@ export function matchQuestionToProfile(
   }
 
   // For text, date, and paragraph controls
+  let fillVal = profileVal;
+  if (matchedKey === 'dateOfBirth' && (question.controlType === 'text' || question.controlType === 'paragraph')) {
+    fillVal = formatDateToDDMMYY(profileVal);
+  }
+
   return {
     questionId: question.id,
     questionTitle: question.title,
     matched: true,
     fieldKey: matchedKey,
-    valueToFill: profileVal,
+    valueToFill: fillVal,
     confidence: 1.0
   };
 }

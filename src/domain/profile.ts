@@ -23,7 +23,7 @@ export interface StudentProfile {
   // Personal details
   uid?: string;
   name?: string;
-  dateOfBirth?: string; // YYYY-MM-DD
+  dateOfBirth?: string; // YYYY-MM-DD or DD/MM/YY
   age?: string; // Derived or explicit years
   gender?: Gender | string;
   college?: string;
@@ -83,20 +83,69 @@ export interface ValidationResult {
 }
 
 /**
- * Calculates current age in full years from date of birth string (YYYY-MM-DD)
+ * Formats a date string (YYYY-MM-DD, DD/MM/YYYY, etc.) to standard dd/mm/yy format
+ */
+export function formatDateToDDMMYY(dobString: string): string {
+  if (!dobString || typeof dobString !== 'string') return '';
+  const trimmed = dobString.trim();
+
+  // Match YYYY-MM-DD or YYYY/MM/DD
+  const ymdMatch = trimmed.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if (ymdMatch) {
+    const [, year, month, day] = ymdMatch;
+    const dd = day.padStart(2, '0');
+    const mm = month.padStart(2, '0');
+    const yy = year.slice(-2);
+    return `${dd}/${mm}/${yy}`;
+  }
+
+  // Match DD-MM-YYYY or DD/MM/YYYY or DD/MM/YY
+  const dmyMatch = trimmed.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})$/);
+  if (dmyMatch) {
+    const [, day, month, year] = dmyMatch;
+    const dd = day.padStart(2, '0');
+    const mm = month.padStart(2, '0');
+    const yy = year.length === 4 ? year.slice(-2) : year.padStart(2, '0');
+    return `${dd}/${mm}/${yy}`;
+  }
+
+  return dobString;
+}
+
+/**
+ * Calculates current age in full years from date of birth string (YYYY-MM-DD, DD/MM/YYYY, or DD/MM/YY)
  */
 export function calculateAge(dobString: string, referenceDate: Date = new Date()): number | null {
   if (!dobString || typeof dobString !== 'string') return null;
-  const parts = dobString.split('-');
-  if (parts.length < 3) return null;
-  const year = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const day = parseInt(parts[2], 10);
+  const trimmed = dobString.trim();
+
+  let year: number;
+  let month: number;
+  let day: number;
+
+  const ymdMatch = trimmed.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if (ymdMatch) {
+    year = parseInt(ymdMatch[1], 10);
+    month = parseInt(ymdMatch[2], 10) - 1;
+    day = parseInt(ymdMatch[3], 10);
+  } else {
+    const dmyMatch = trimmed.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})$/);
+    if (!dmyMatch) return null;
+    day = parseInt(dmyMatch[1], 10);
+    month = parseInt(dmyMatch[2], 10) - 1;
+    let yr = parseInt(dmyMatch[3], 10);
+    if (yr < 100) {
+      // 2-digit year conversion: >= 50 is 19xx, < 50 is 20xx
+      yr = yr >= 50 ? 1900 + yr : 2000 + yr;
+    }
+    year = yr;
+  }
 
   if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
+  if (month < 0 || month > 11 || day < 1 || day > 31) return null;
 
   const birth = new Date(year, month, day);
-  if (isNaN(birth.getTime())) return null;
+  if (isNaN(birth.getTime()) || birth > referenceDate) return null;
 
   let age = referenceDate.getFullYear() - birth.getFullYear();
   const monthDiff = referenceDate.getMonth() - birth.getMonth();
