@@ -9,6 +9,12 @@
 
 ---
 
+## Demo
+
+![FormPilot in Action](assets/demo.gif)
+
+---
+
 ## Overview
 
 Applying for college campus placements and internships requires filling the same personal, academic, and contact details hundreds of times on Google Forms.
@@ -61,7 +67,7 @@ FormPilot targets two primary distribution bundles:
 1. **Personal Details:**
    - UID / Registration Number
    - Full Name
-   - Date of Birth
+   - Date of Birth (Autofills in standard `dd/mm/yy` format)
    - Age in Years (derived automatically from DOB)
    - Gender (`Male` / `Female`)
    - College / University Name
@@ -156,7 +162,7 @@ FormPilot uses a structured 3-tier release automation flow managed with GitHub A
 
 1. **`preview` (Staging & Verification):**
    - Active development branch.
-   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 67-test Vitest suite, and builds both extensions.
+   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 69-test Vitest suite, and builds both extensions.
 2. **`main` (Production Source):**
    - Holds stable, tested code merged from `preview`.
    - Pushing/merging to `main` triggers `release.yml`.
