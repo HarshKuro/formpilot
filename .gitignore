@@ -5,6 +5,7 @@ node_modules/
 dist/
 dist-firefox/
 dist-chrome/
+releases/
 
 # Logs and environment
 *.log
