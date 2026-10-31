@@ -17,6 +17,24 @@ Applying for college campus placements and internships requires filling the same
 
 ---
 
+## Supported Browsers
+
+FormPilot targets two primary distribution bundles:
+
+1. **Chromium Engine Package (`dist-chrome` / `formpilot-chrome-v*.zip`):**
+   - **Google Chrome**
+   - **Brave Browser**
+   - **Arc Browser**
+   - **Microsoft Edge**
+   - **Opera & Opera GX**
+   - **Vivaldi**
+   *(All modern Chromium-based browsers share the Manifest V3 WebExtensions runtime and are 100% supported).*
+
+2. **Gecko Package (`dist-firefox` / `formpilot-firefox-v*.zip`):**
+   - **Mozilla Firefox**
+
+---
+
 ## Privacy & Safety First
 
 - **100% Local Storage:** All student data stays on your device inside `chrome.storage.local`. Zero cloud servers, zero analytics, zero external network requests.
@@ -58,79 +76,99 @@ Applying for college campus placements and internships requires filling the same
 
 ---
 
-## Installation & Setup
+## Installation Guide for Chromium Browsers (Brave, Arc, Chrome, Edge)
 
-### Prerequisites
+Because Brave, Arc, Edge, Opera, and Vivaldi are powered by Google Chromium, the Chrome package works seamlessly across all of them.
 
-- Node.js (v18+)
-- pnpm (or npm)
+### Step 1: Download or Build the Package
+- **From Release:** Download `formpilot-chrome-v1.0.0.zip` from the `release` branch or GitHub Releases and extract it.
+- **From Source:**
+  ```bash
+  pnpm install
+  pnpm build
+  # Or generate the zips directly
+  pnpm package:zip
+  ```
 
-### 1. Build the Extension
+### Step 2: Load into Your Browser
 
-```bash
-# Install dependencies
-pnpm install
+#### 🦁 Brave Browser
+1. Open Brave and go to `brave://extensions`.
+2. Toggle ON **Developer mode** in the top right.
+3. Click **Load unpacked** in the top left.
+4. Select the extracted `dist-chrome` folder.
+*(Note: FormPilot runs completely offline on your device, so Brave Shields will not block or interfere with its local operation).*
 
-# Run full test suite (62 unit & integration tests)
-pnpm test
+#### 🌀 Arc Browser
+1. Open Arc and hit `Cmd + T` (Mac) or `Ctrl + T` (Windows).
+2. Type `arc://extensions` (or `chrome://extensions`) and hit Enter.
+3. Toggle ON **Developer mode** in the top right.
+4. Click **Load unpacked** and select the `dist-chrome` folder.
+5. You can pin FormPilot to your Arc toolbar from the extensions menu.
 
-# Build packages for Chrome, Edge, and Firefox
-pnpm build
+#### 🌐 Google Chrome
+1. Navigate to `chrome://extensions`.
+2. Enable **Developer mode** in the top-right corner.
+3. Click **Load unpacked** and choose `dist-chrome`.
+
+#### 🌊 Microsoft Edge
+1. Navigate to `edge://extensions`.
+2. Turn on **Developer mode** in the left sidebar.
+3. Click **Load unpacked** and choose `dist-chrome`.
+
+#### 🔴 Opera & Vivaldi
+1. Navigate to `opera://extensions` or `vivaldi://extensions`.
+2. Enable **Developer mode**.
+3. Click **Load unpacked** and choose `dist-chrome`.
+
+---
+
+## Installation Guide for Mozilla Firefox
+
+1. Download or build `dist-firefox` (or extract `formpilot-firefox-v1.0.0.zip`).
+2. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`.
+3. Click **Load Temporary Add-on...**
+4. Select the `manifest.json` file inside the `dist-firefox` folder.
+
+---
+
+## Branching & Release Pipeline (`preview` -> `main` -> `release`)
+
+FormPilot uses a structured 3-tier release automation flow managed with GitHub Actions:
+
+```text
+[ Feature / PR ] ──> [ preview ] ──> [ main ] ──> [ release ]
+                          │              │              │
+                     Preview CI      Merge Gate    Auto-Build & Release
+                     (Tests/Build)  (Integration)  (Zips & GitHub Release)
 ```
 
-This generates:
-- `dist-chrome/` (Manifest V3 for Google Chrome & Microsoft Edge)
-- `dist-firefox/` (Manifest V3 for Mozilla Firefox)
+1. **`preview` (Staging & Verification):**
+   - Active development branch.
+   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 62-test Vitest suite, and builds both extensions.
+2. **`main` (Production Source):**
+   - Holds stable, tested code merged from `preview`.
+   - Pushing/merging to `main` triggers `release.yml`.
+3. **`release` (Distribution Artifacts):**
+   - Fully automated branch.
+   - GitHub Actions automatically checks out `main`, compiles Chrome and Firefox builds, zips them into `releases/formpilot-chrome-v*.zip` and `releases/formpilot-firefox-v*.zip`, commits them to `release`, and attaches them to a new GitHub Release.
 
 ---
 
-## Loading Unpacked in Browsers
-
-### Google Chrome & Microsoft Edge
-
-1. Open Chrome and navigate to `chrome://extensions` (or `edge://extensions` in Edge).
-2. Toggle on **Developer mode** in the top-right corner.
-3. Click the **Load unpacked** button in the top-left corner.
-4. Select the `FormPilot Extension/dist-chrome` directory.
-5. FormPilot is now active! The options page will open automatically on initial install for profile setup.
-
-### Mozilla Firefox
-
-1. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on...**
-3. Select `FormPilot Extension/dist-firefox/manifest.json`.
-4. FormPilot is now installed in Firefox.
-
----
-
-## Verified Real-World Form Compatibility
-
-FormPilot has been tested and verified against actual placement Google Forms, including:
-- `https://docs.google.com/forms/d/e/1FAIpQLSdnJWq-yXoCrlPTB47t4-Aw_zeGKFXeub3z4hhx23EjOmhd2w/viewform`
-
-Verified Results:
-- **19/19** supported student questions matched and autofilled accurately.
-- **4/4** manual and declaration fields (Resume link, Position Applying For, Location Preference, Important Message / Consent) strictly preserved for manual completion.
-
----
-
-## Development & Testing Commands
+## Development & Test Commands
 
 ```bash
-# Run unit tests
+# Run unit & integration tests
 pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
 
 # TypeScript typechecking
 pnpm typecheck
 
-# Build for Chrome/Edge only
-pnpm build:chrome
+# Build both Chromium & Firefox distributions
+pnpm build
 
-# Build for Firefox only
-pnpm build:firefox
+# Package standalone ZIP archives
+pnpm package:zip
 ```
 
 ---
