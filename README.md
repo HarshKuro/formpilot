@@ -13,7 +13,18 @@
 
 Applying for college campus placements and internships requires filling the same personal, academic, and contact details hundreds of times on Google Forms.
 
-**FormPilot** lets students create a comprehensive academic and personal profile once. When you open a supported Google Form, FormPilot securely detects matching fields and offers a small, non-intrusive autofill prompt. You review and click **Accept**, and only high-confidence profile fields are filled. Manual questions and consent checkboxes remain untouched for you to answer manually.
+**FormPilot** lets students create a comprehensive academic and personal profile once.
+
+### Two Ways to Autofill:
+1. **Automatic In-Page Floating Prompt:**
+   - Open any Google Form. FormPilot automatically detects matching questions and displays a discreet floating prompt in the bottom-right corner.
+   - Shows exact breakdown: e.g. "18 fields ready, 4 manual questions".
+   - Review and click **Autofill Fields** to populate answers instantly.
+   - If you haven't configured a profile yet, FormPilot displays an onboarding reminder to set up your profile with one click.
+2. **One-Click Extension Toolbar Popup:**
+   - Click the FormPilot icon in your browser toolbar at any time.
+   - Click **"⚡ Autofill Current Form"** to fill all matching fields immediately.
+   - Or click **"Open In-Page Prompt"** to bring up the interactive modal on the page.
 
 ---
 
@@ -145,13 +156,13 @@ FormPilot uses a structured 3-tier release automation flow managed with GitHub A
 
 1. **`preview` (Staging & Verification):**
    - Active development branch.
-   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 62-test Vitest suite, and builds both extensions.
+   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 67-test Vitest suite, and builds both extensions.
 2. **`main` (Production Source):**
    - Holds stable, tested code merged from `preview`.
    - Pushing/merging to `main` triggers `release.yml`.
 3. **`release` (Distribution Artifacts):**
    - Fully automated branch.
-   - GitHub Actions automatically checks out `main`, compiles Chrome and Firefox builds, zips them into `releases/formpilot-chrome-v*.zip` and `releases/formpilot-firefox-v*.zip`, commits them to `release`, and attaches them to a new GitHub Release.
+   - GitHub Actions automatically checks out `main`, compiles Chrome and Firefox builds, zips them into `releases/formpilot-chrome-v*.zip` and `releases/formpilot-firefox-v*.zip`, commits them to `release`, and attaches them to a new GitHub Release with automatic version tags.
 
 ---
 

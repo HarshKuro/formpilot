@@ -48,3 +48,4 @@ if (fs.existsSync(firefoxManifestPath)) {
 }
 
 console.log(`[FormPilot] Version successfully updated to ${targetVersion} across package.json and manifests.`);
+

@@ -39,13 +39,21 @@ const SHADOW_STYLES = `
   .bg-white { background-color: #ffffff; }
   .bg-slate-900 { background-color: #0f172a; }
   .bg-slate-800 { background-color: #1e293b; }
+  .bg-slate-200 { background-color: #e2e8f0; }
   .bg-slate-100 { background-color: #f1f5f9; }
   .bg-slate-50 { background-color: #f8fafc; }
+  .bg-indigo-700 { background-color: #4338ca; }
   .bg-indigo-600 { background-color: #4f46e5; }
   .bg-indigo-500 { background-color: #6366f1; }
   .bg-indigo-50 { background-color: #eef2ff; }
   .bg-indigo-900\\/80 { background-color: rgba(49, 46, 129, 0.8); }
   .bg-emerald-50 { background-color: #ecfdf5; }
+  .bg-amber-50 { background-color: #fffbeb; }
+  .border-amber-200 { border-color: #fde68a; }
+  .text-amber-950 { color: #451a03; }
+  .text-amber-900 { color: #78350f; }
+  .text-amber-800 { color: #92400e; }
+  .text-amber-600 { color: #d97706; }
   .text-white { color: #ffffff; }
   .text-slate-800 { color: #1e293b; }
   .text-slate-700 { color: #334155; }
@@ -134,7 +142,11 @@ export function mountPromptModal(props: PromptModalProps): void {
     hostElement.style.zIndex = '2147483647';
     hostElement.style.bottom = '0';
     hostElement.style.right = '0';
-    document.body.appendChild(hostElement);
+
+    const parent = document.body || document.documentElement;
+    if (parent) {
+      parent.appendChild(hostElement);
+    }
 
     const shadowRoot = hostElement.attachShadow({ mode: 'open' });
 

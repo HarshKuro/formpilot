@@ -11,16 +11,12 @@ export default defineConfig({
       input: {
         popup: resolve(__dirname, 'popup.html'),
         options: resolve(__dirname, 'options.html'),
-        'background/service-worker': resolve(__dirname, 'src/background/service-worker.ts'),
-        'content/index': resolve(__dirname, 'src/content/index.ts')
+        'background/service-worker': resolve(__dirname, 'src/background/service-worker.ts')
       },
       output: {
         entryFileNames: (chunkInfo) => {
           if (chunkInfo.name === 'background/service-worker') {
             return 'background/service-worker.js';
-          }
-          if (chunkInfo.name === 'content/index') {
-            return 'content/index.js';
           }
           return '[name].js';
         },
