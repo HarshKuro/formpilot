@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { ShieldCheck, CheckCircle2, X, ExternalLink, Sparkles } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, X, ExternalLink, Sparkles, UserPlus, AlertCircle } from 'lucide-react';
 
 export interface PromptModalProps {
   matchedCount: number;
   skippedCount: number;
   studentName?: string;
+  hasProfile?: boolean;
   isCompleted?: boolean;
   filledCount?: number;
   onAccept: () => void;
@@ -17,6 +18,7 @@ export const PromptModal: React.FC<PromptModalProps> = ({
   matchedCount,
   skippedCount,
   studentName,
+  hasProfile = true,
   isCompleted = false,
   filledCount = 0,
   onAccept,
@@ -57,7 +59,11 @@ export const PromptModal: React.FC<PromptModalProps> = ({
               <span className="text-[10px] bg-indigo-900/80 text-indigo-200 px-1.5 py-0.5 rounded font-mono font-normal">Local</span>
             </h2>
             <p id="formpilot-dialog-desc" className="text-[11px] text-slate-300">
-              {studentName ? `Profile: ${studentName}` : 'Student Profile Autofill'}
+              {hasProfile && studentName
+                ? `Profile: ${studentName}`
+                : hasProfile
+                ? 'Student Profile Autofill'
+                : 'Setup Required'}
             </p>
           </div>
         </div>
@@ -73,7 +79,36 @@ export const PromptModal: React.FC<PromptModalProps> = ({
 
       {/* Body Content */}
       <div className="p-4 space-y-3.5">
-        {isCompleted ? (
+        {!hasProfile ? (
+          /* No profile onboarding state */
+          <div className="space-y-3">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-950">
+              <div className="flex items-center space-x-2 font-semibold text-xs text-amber-900 mb-1">
+                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                <span>Google Form Detected!</span>
+              </div>
+              <p className="text-[11px] text-amber-800 leading-relaxed">
+                FormPilot can autofill your student details in 1 click. Configure your profile once to get started.
+              </p>
+            </div>
+
+            <button
+              onClick={onEdit}
+              className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer active:scale-[0.99]"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Create Student Profile</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors focus:outline-none"
+            >
+              Dismiss for Now
+            </button>
+          </div>
+        ) : isCompleted ? (
+          /* Completed state */
           <div className="space-y-3">
             <div className="flex items-center space-x-2.5 text-emerald-700 bg-emerald-50 border border-emerald-100 p-3 rounded-xl">
               <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
@@ -92,7 +127,34 @@ export const PromptModal: React.FC<PromptModalProps> = ({
               Done & Dismiss
             </button>
           </div>
+        ) : matchedCount === 0 ? (
+          /* 0 matches state */
+          <div className="space-y-3">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 text-center">
+              <p className="font-semibold text-xs text-slate-800">No Profile Matches Found</p>
+              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                None of the questions on this form matched your current profile fields.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={onEdit}
+                className="py-2 px-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg flex items-center justify-center space-x-1 transition-colors"
+              >
+                <span>Edit Profile</span>
+                <ExternalLink className="w-3 h-3" />
+              </button>
+              <button
+                onClick={onClose}
+                className="py-2 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
         ) : (
+          /* Ready to autofill state */
           <>
             {/* Field match breakdown */}
             <div className="grid grid-cols-2 gap-2 text-center">
@@ -122,12 +184,7 @@ export const PromptModal: React.FC<PromptModalProps> = ({
             <div className="space-y-2 pt-1">
               <button
                 onClick={onAccept}
-                disabled={matchedCount === 0}
-                className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
-                  matchedCount > 0
-                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer active:scale-[0.99]'
-                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                }`}
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer active:scale-[0.99]"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Autofill {matchedCount} Fields</span>

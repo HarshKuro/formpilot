@@ -7,9 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/package-extension.js all",
-    "build:chrome": "vite build && node scripts/package-extension.js chrome",
-    "build:firefox": "vite build && node scripts/package-extension.js firefox",
+    "build": "vite build && vite build --config vite.content.config.ts && node scripts/package-extension.js all",
+    "build:chrome": "vite build && vite build --config vite.content.config.ts && node scripts/package-extension.js chrome",
+    "build:firefox": "vite build && vite build --config vite.content.config.ts && node scripts/package-extension.js firefox",
     "package:zip": "node scripts/zip-extension.js",
     "set-version": "node scripts/set-version.js",
     "typecheck": "tsc --noEmit",

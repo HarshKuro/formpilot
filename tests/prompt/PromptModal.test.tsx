@@ -21,6 +21,45 @@ describe('PromptModal Component', () => {
     expect(screen.getAllByText(/Harsh Partap Jain/i).length).toBeGreaterThanOrEqual(1);
   });
 
+  it('renders onboarding state when hasProfile is false', () => {
+    const handleEdit = vi.fn();
+    render(
+      <PromptModal
+        matchedCount={0}
+        skippedCount={0}
+        hasProfile={false}
+        onAccept={vi.fn()}
+        onReject={vi.fn()}
+        onClose={vi.fn()}
+        onEdit={handleEdit}
+      />
+    );
+
+    expect(screen.getByText(/Google Form Detected!/i)).toBeDefined();
+    expect(screen.getByText(/Create Student Profile/i)).toBeDefined();
+
+    const createBtn = screen.getByRole('button', { name: /create student profile/i });
+    fireEvent.click(createBtn);
+    expect(handleEdit).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders 0 matches state gracefully', () => {
+    const handleEdit = vi.fn();
+    render(
+      <PromptModal
+        matchedCount={0}
+        skippedCount={5}
+        hasProfile={true}
+        onAccept={vi.fn()}
+        onReject={vi.fn()}
+        onClose={vi.fn()}
+        onEdit={handleEdit}
+      />
+    );
+
+    expect(screen.getByText(/No Profile Matches Found/i)).toBeDefined();
+  });
+
   it('triggers onAccept when Accept button is clicked', () => {
     const handleAccept = vi.fn();
     render(
