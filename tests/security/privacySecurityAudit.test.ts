@@ -10,9 +10,9 @@ describe('Security & Privacy Audit', () => {
     const chromeManifest = JSON.parse(fs.readFileSync(chromeManifestPath, 'utf8'));
     const firefoxManifest = JSON.parse(fs.readFileSync(firefoxManifestPath, 'utf8'));
 
-    // Only storage permission is permitted
-    expect(chromeManifest.permissions).toEqual(['storage']);
-    expect(firefoxManifest.permissions).toEqual(['storage']);
+    // Storage, activeTab, and scripting permissions are permitted for local autofill
+    expect(chromeManifest.permissions).toEqual(['storage', 'activeTab', 'scripting']);
+    expect(firefoxManifest.permissions).toEqual(['storage', 'activeTab', 'scripting']);
 
     // Host permissions strictly restricted to Google Forms
     expect(chromeManifest.host_permissions).toEqual(['https://docs.google.com/forms/*']);
