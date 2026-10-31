@@ -11,6 +11,7 @@
     "build:chrome": "vite build && node scripts/package-extension.js chrome",
     "build:firefox": "vite build && node scripts/package-extension.js firefox",
     "package:zip": "node scripts/zip-extension.js",
+    "set-version": "node scripts/set-version.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"

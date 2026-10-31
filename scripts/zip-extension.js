@@ -33,3 +33,4 @@ function createZip(sourceDir, zipName) {
 console.log(`[FormPilot] Packaging release archives for version v${version}...`);
 createZip(path.resolve(rootDir, 'dist-chrome'), `formpilot-chrome-v${version}.zip`);
 createZip(path.resolve(rootDir, 'dist-firefox'), `formpilot-firefox-v${version}.zip`);
+
