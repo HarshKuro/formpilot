@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   calculateAge,
+  formatDateToDDMMYY,
   validateProfile,
   formatPercentage,
   StudentProfile,
@@ -29,9 +30,31 @@ describe('Profile Domain - Age Calculation', () => {
     expect(calculateAge(dob, refDate)).toBe(23);
   });
 
+  it('calculates age correctly from dd/mm/yy format', () => {
+    const dob = '15/05/03';
+    const refDate = new Date('2026-06-01');
+    expect(calculateAge(dob, refDate)).toBe(23);
+  });
+
   it('returns null for invalid dates', () => {
     expect(calculateAge('invalid-date')).toBeNull();
     expect(calculateAge('')).toBeNull();
+  });
+});
+
+describe('Profile Domain - Date Formatting', () => {
+  it('formats YYYY-MM-DD into dd/mm/yy format', () => {
+    expect(formatDateToDDMMYY('2003-05-15')).toBe('15/05/03');
+    expect(formatDateToDDMMYY('1999-12-05')).toBe('05/12/99');
+  });
+
+  it('formats DD/MM/YYYY into dd/mm/yy format', () => {
+    expect(formatDateToDDMMYY('15/05/2003')).toBe('15/05/03');
+    expect(formatDateToDDMMYY('05-12-1999')).toBe('05/12/99');
+  });
+
+  it('preserves existing dd/mm/yy format', () => {
+    expect(formatDateToDDMMYY('15/05/03')).toBe('15/05/03');
   });
 });
 
@@ -49,34 +72,41 @@ describe('Profile Domain - Validation', () => {
     expect(resInvalid.errors.email).toBeDefined();
 
     const resValid = validateProfile({ email: 'student@example.com' });
-    expect(resValid.errors.email).toBeUndefined();
+    expect(resValid.isValid).toBe(true);
   });
 
-  it('validates mobile number format', () => {
-    const resInvalid = validateProfile({ mobile: '123' });
-    expect(resInvalid.isValid).toBe(false);
-    expect(resInvalid.errors.mobile).toBeDefined();
+  it('validates mobile number digit length', () => {
+    const resShort = validateProfile({ mobile: '123' });
+    expect(resShort.isValid).toBe(false);
+    expect(resShort.errors.mobile).toBeDefined();
 
-    const resValid = validateProfile({ mobile: '9876543210' });
-    expect(resValid.errors.mobile).toBeUndefined();
+    const resValid = validateProfile({ mobile: '+91 9876543210' });
+    expect(resValid.isValid).toBe(true);
   });
 
-  it('validates percentages within 0-100', () => {
-    const resInvalid = validateProfile({ tenthPercentage: '105' });
-    expect(resInvalid.isValid).toBe(false);
-    expect(resInvalid.errors.tenthPercentage).toBeDefined();
+  it('validates percentage fields are within 0-100 range', () => {
+    const resOver = validateProfile({ tenthPercentage: '105' });
+    expect(resOver.isValid).toBe(false);
+    expect(resOver.errors.tenthPercentage).toBeDefined();
 
-    const resValid = validateProfile({ tenthPercentage: '88.5%' });
-    expect(resValid.errors.tenthPercentage).toBeUndefined();
+    const resUnder = validateProfile({ graduationPercentage: '-5' });
+    expect(resUnder.isValid).toBe(false);
+    expect(resUnder.errors.graduationPercentage).toBeDefined();
+
+    const resValid = validateProfile({
+      tenthPercentage: '85.5%',
+      graduationPercentage: '78.2'
+    });
+    expect(resValid.isValid).toBe(true);
   });
 
-  it('validates CGPA within 0-10', () => {
-    const resInvalid = validateProfile({ currentCgpa: '11.5' });
-    expect(resInvalid.isValid).toBe(false);
-    expect(resInvalid.errors.currentCgpa).toBeDefined();
+  it('validates CGPA is within 0-10 range', () => {
+    const resOver = validateProfile({ currentCgpa: '11' });
+    expect(resOver.isValid).toBe(false);
+    expect(resOver.errors.currentCgpa).toBeDefined();
 
-    const resValid = validateProfile({ currentCgpa: '8.45' });
-    expect(resValid.errors.currentCgpa).toBeUndefined();
+    const resValid = validateProfile({ currentCgpa: '9.4' });
+    expect(resValid.isValid).toBe(true);
   });
 
   it('validates backlogs and education gap are non-negative', () => {
