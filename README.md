@@ -162,13 +162,21 @@ FormPilot uses a structured 3-tier release automation flow managed with GitHub A
 
 1. **`preview` (Staging & Verification):**
    - Active development branch.
-   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 69-test Vitest suite, and builds both extensions.
+   - Pushing to `preview` triggers `preview-ci.yml`, which runs TypeScript typecheck, the full 71-test Vitest suite, and builds both extensions.
 2. **`main` (Production Source):**
    - Holds stable, tested code merged from `preview`.
    - Pushing/merging to `main` triggers `release.yml`.
 3. **`release` (Distribution Artifacts):**
    - Fully automated branch.
    - GitHub Actions automatically checks out `main`, compiles Chrome and Firefox builds, zips them into `releases/formpilot-chrome-v*.zip` and `releases/formpilot-firefox-v*.zip`, commits them to `release`, and attaches them to a new GitHub Release with automatic version tags.
+
+---
+
+## Contributing & Code of Conduct
+
+We welcome contributions from the community!
+- Please read our [Contributing Guide](CONTRIBUTING.md) to get started with setup, testing, and pull requests.
+- All community members and contributors are expected to uphold our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
@@ -192,4 +200,5 @@ pnpm package:zip
 
 ## License
 
-MIT License. Developed with care by Harsh Partap Jain.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.  
+Developed with care by Harsh Partap Jain.
