@@ -28,7 +28,9 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["background/service-worker.js"]
+    "scripts": [
+      "background/service-worker.js"
+    ]
   },
   "content_scripts": [
     {
