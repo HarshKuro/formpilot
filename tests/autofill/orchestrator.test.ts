@@ -52,6 +52,10 @@ describe('Autofill Orchestrator on Real Google Form', () => {
     const nameQ = questions.find(q => q.title === 'Name');
     expect((nameQ?.inputElement as HTMLInputElement)?.value).toBe('Harsh Partap Jain');
 
+    // Verify Date of Birth text input has been populated in dd/mm/yy format
+    const dobQ = questions.find(q => q.title === 'Date of Birth');
+    expect((dobQ?.inputElement as HTMLInputElement)?.value).toBe('15/05/03');
+
     // Verify Gender radio button was checked
     const genderQ = questions.find(q => q.title === 'Gender');
     const maleOption = genderQ?.options?.find(o => o.value === 'Male');
